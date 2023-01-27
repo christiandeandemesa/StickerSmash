@@ -1,3 +1,5 @@
+// Emoji sticker on the displayed image
+
 import { View, Image } from "react-native";
 
 function EmojiSticker({ imageSize, stickerSource }) {

@@ -1,3 +1,5 @@
+// Main part of the app.
+
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
@@ -59,6 +61,7 @@ function App() {
   return (
     // All core components in React Native have a style prop.
     <View style={styles.container}>
+      {/* Chosen image and any emoji stickers added to it */}
       <View style={styles.imageContainer}>
         <ImageViewer
           placeholderImageSource={PlaceholderImage}
@@ -69,7 +72,9 @@ function App() {
         ) : null}
       </View>
 
+      {/* Buttons */}
       {showAppOptions ? (
+        // Reset, add emoji, and save buttons
         <View style={styles.optionsContainer}>
           <View style={styles.optionsRow}>
             <IconButton icon="refresh" label="Reset" onPress={onReset} />
@@ -82,6 +87,7 @@ function App() {
           </View>
         </View>
       ) : (
+        // Choose and use photo buttons
         <View style={styles.footerContainer}>
           <Button
             label="Choose a photo"
@@ -95,10 +101,10 @@ function App() {
         </View>
       )}
 
+      {/* Emoji modal */}
       <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
-
       <StatusBar style="auto" />
     </View>
   );

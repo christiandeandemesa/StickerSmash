@@ -1,3 +1,5 @@
+// Displayed image
+
 import { StyleSheet, Image } from "react-native";
 
 function ImageViewer({ placeholderImageSource, selectedImage }) {

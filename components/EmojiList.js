@@ -1,3 +1,5 @@
+// List of emojis within the emoji modal
+
 import { useState } from "react";
 import { StyleSheet, FlatList, Image, Platform, Pressable } from "react-native";
 
