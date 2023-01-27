@@ -1,13 +1,15 @@
 // Main part of the app.
 
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { captureRef } from "react-native-view-shot";
 import { useState, useRef } from "react";
 
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
+
+import domtoimage from "dom-to-image";
 
 import ImageViewer from "./components/ImageViewer";
 import Button from "./components/Button";
@@ -65,23 +67,41 @@ function App() {
     setIsModalVisible(false);
   };
 
-  // Saves the screenshot (i.e. the displayed image and emoji sticker) to the device's media library.
+  // Saves the screenshot (i.e. the displayed image and emoji sticker) to the device's media library, or downloads it as a JPEG while on the web.
   const onSaveImageAsync = async () => {
-    try {
-      // The captureRef() method accepts an optional argument where we can pass the height and width of the area to screenshot.
-      const localUri = await captureRef(imageRef, {
-        height: 440,
-        quality: 1,
-      });
+    if (Platform.OS !== "web") {
+      try {
+        // The captureRef() method accepts an optional argument where we can pass the height and width of the area to screenshot.
+        const localUri = await captureRef(imageRef, {
+          height: 440,
+          quality: 1,
+        });
 
-      // localUri is the promise returned from captureRef() with the URI of the captured screenshot.
-      // MediaLibrary.saveToLibraryAsync() saves the screenshot to the device's media library.
-      await MediaLibrary.saveToLibraryAsync(localUri);
-      if (localUri) {
-        alert("Saved!");
+        // localUri is the promise returned from captureRef() with the URI of the captured screenshot.
+        // MediaLibrary.saveToLibraryAsync() saves the screenshot to the device's media library.
+        await MediaLibrary.saveToLibraryAsync(localUri);
+        if (localUri) {
+          alert("Saved!");
+        }
+      } catch (e) {
+        console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    } else {
+      domtoimage
+        .toJpeg(imageRef.current, {
+          quality: 0.95,
+          width: 320,
+          height: 440,
+        })
+        .then((dataUrl) => {
+          let link = document.createElement("a");
+          link.download = "sticker-smash.jpeg";
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   };
 
