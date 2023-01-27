@@ -3,9 +3,11 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { useState } from "react";
+import { captureRef } from "react-native-view-shot";
+import { useState, useRef } from "react";
 
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
 
 import ImageViewer from "./components/ImageViewer";
 import Button from "./components/Button";
@@ -18,10 +20,18 @@ import EmojiSticker from "./components/EmojiSticker";
 import PlaceholderImage from "./assets/images/background-image.png";
 
 function App() {
+  const [status, requestPermission] = MediaLibrary.usePermissions();
+  const imageRef = useRef();
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState(null);
+
+  // The requestPermission() method asks for access to the user's device's media library when permission is not granted (i.e. status === null).
+  if (status === null) {
+    requestPermission();
+  }
 
   // Selects an image from your device's media library sets it in a state.
   const pickImageAsync = async () => {
@@ -55,8 +65,24 @@ function App() {
     setIsModalVisible(false);
   };
 
+  // Saves the screenshot (i.e. the displayed image and emoji sticker) to the device's media library.
   const onSaveImageAsync = async () => {
-    // we will implement this later
+    try {
+      // The captureRef() method accepts an optional argument where we can pass the height and width of the area to screenshot.
+      const localUri = await captureRef(imageRef, {
+        height: 440,
+        quality: 1,
+      });
+
+      // localUri is the promise returned from captureRef() with the URI of the captured screenshot.
+      // MediaLibrary.saveToLibraryAsync() saves the screenshot to the device's media library.
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        alert("Saved!");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -65,13 +91,16 @@ function App() {
     <GestureHandlerRootView style={styles.container}>
       {/* Chosen image and any emoji stickers added to it */}
       <View style={styles.imageContainer}>
-        <ImageViewer
-          placeholderImageSource={PlaceholderImage}
-          selectedImage={selectedImage}
-        />
-        {pickedEmoji !== null ? (
-          <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
-        ) : null}
+        {/* the collapsable prop because we only want a screenshot of everything within this View component. */}
+        <View ref={imageRef} collapsable={false}>
+          <ImageViewer
+            placeholderImageSource={PlaceholderImage}
+            selectedImage={selectedImage}
+          />
+          {pickedEmoji !== null ? (
+            <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
+          ) : null}
+        </View>
       </View>
 
       {/* Buttons */}
