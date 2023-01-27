@@ -34,11 +34,7 @@ function Button({ label, theme, onPress }) {
   return (
     <View style={styles.buttonContainer}>
       {/* The Pressable component that detects various types of interaction (e.g. single-tap or long press events). */}
-      <Pressable
-        style={styles.button}
-        // Creates a typical phone alert.
-        onPress={() => alert("You pressed a button")}
-      >
+      <Pressable style={styles.button} onPress={onPress}>
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>
     </View>
