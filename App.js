@@ -156,7 +156,9 @@ function App() {
       <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
-      <StatusBar style="auto" />
+
+      {/* Status bar (e.g. Wifi, time, battery percent, etc.) */}
+      <StatusBar style="light" />
     </GestureHandlerRootView>
   );
 }
