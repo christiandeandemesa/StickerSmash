@@ -2,6 +2,7 @@
 
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useState } from "react";
 
 import * as ImagePicker from "expo-image-picker";
@@ -59,8 +60,9 @@ function App() {
   };
 
   return (
+    // GestureHandlerRootView handles gestures (e.g. pan, tap, rotation, etc.).
     // All core components in React Native have a style prop.
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       {/* Chosen image and any emoji stickers added to it */}
       <View style={styles.imageContainer}>
         <ImageViewer
@@ -106,7 +108,7 @@ function App() {
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
       <StatusBar style="auto" />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
